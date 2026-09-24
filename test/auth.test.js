@@ -51,3 +51,14 @@ test("POST /api/auth/register should successfully register a user", async () => 
   assert.ok(user);
   assert.notStrictEqual(user.password, password);
 });
+
+test("POST /api/auth/register should reject duplicate email", async () => {
+  const response = await request(app).post("/api/auth/register").send({
+    email: testEmail,
+    password: "password123",
+  });
+
+  assert.strictEqual(response.statusCode, 409);
+  assert.strictEqual(response.body.message, "This User is already Registered!");
+  assert.strictEqual(response.body.success, false);
+});
