@@ -3,14 +3,18 @@ const router = express.Router();
 
 const auth = require("../middleware/authMiddleware");
 const validate = require("../middleware/validate");
+const validateQuery = require("../middleware/validateQuery");
+
 const taskSchema = require("../schemas/taskSchema");
 const taskQuerySchema = require("../schemas/taskQuerySchema");
-const validateQuery = require("../middleware/validateQuery");
+const taskPatchSchema = require("../schemas/taskPatchSchema");
+
 const {
   createTask,
   getTasks,
   getTask,
   updateTask,
+  patchTask,
   deleteTask,
 } = require("../controller/taskController");
 
@@ -21,6 +25,8 @@ router.get("/", auth, validateQuery(taskQuerySchema), getTasks);
 router.get("/:id", auth, getTask);
 
 router.put("/:id", auth, validate(taskSchema), updateTask);
+
+router.patch("/:id", auth, validate(taskPatchSchema), patchTask);
 
 router.delete("/:id", auth, deleteTask);
 

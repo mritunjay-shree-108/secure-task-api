@@ -134,6 +134,52 @@ const updateTask = asyncHandler(async (req, res) => {
   });
 });
 
+const patchTask = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new AppError("Invalid Task Id!", 400);
+  }
+
+  const { title, description, completed } = req.body;
+
+  const updateData = {};
+
+  if (title !== undefined) {
+    updateData.title = title;
+  }
+
+  if (description !== undefined) {
+    updateData.description = description;
+  }
+
+  if (completed !== undefined) {
+    updateData.completed = completed;
+  }
+
+  const requestedTask = await Task.findOneAndUpdate(
+    {
+      _id: id,
+      userId: req.user.id,
+    },
+    {
+      $set: updateData,
+    },
+    {
+      new: true,
+      runValidators: true,
+    },
+  );
+
+  if (!requestedTask) {
+    throw new AppError("Task doesn't exist!", 404);
+  }
+
+  return res.json({
+    task: requestedTask,
+  });
+});
+
 const deleteTask = asyncHandler(async (req, res) => {
   const id = req.params.id;
 
@@ -160,5 +206,6 @@ module.exports = {
   getTasks,
   getTask,
   updateTask,
+  patchTask,
   deleteTask,
 };
