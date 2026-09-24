@@ -29,6 +29,10 @@ const sessionSchema = new mongoose.Schema(
   },
 );
 
+sessionSchema.index({ refreshTokenHash: 1 }, { unique: true });
+
+sessionSchema.index({ familyId: 1 });
+
 const Session = mongoose.model("Session", sessionSchema);
 
 module.exports = Session;
