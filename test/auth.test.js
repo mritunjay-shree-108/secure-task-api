@@ -62,3 +62,38 @@ test("POST /api/auth/register should reject duplicate email", async () => {
   assert.strictEqual(response.body.message, "This User is already Registered!");
   assert.strictEqual(response.body.success, false);
 });
+
+test("POST /api/auth/login should login successfully", async () => {
+  const response = await request(app).post("/api/auth/login").send({
+    email: testEmail,
+    password: "password123",
+  });
+
+  assert.strictEqual(response.statusCode, 200);
+  assert.strictEqual(response.body.message, "Login Successful");
+
+  assert.ok(response.body.accessToken);
+  assert.ok(response.body.refreshToken);
+});
+
+test("POST /api/auth/login should reject wrong password", async () => {
+  const response = await request(app).post("/api/auth/login").send({
+    email: testEmail,
+    password: "wrongpassword",
+  });
+
+  assert.strictEqual(response.statusCode, 401);
+  assert.strictEqual(response.body.message, "Invalid Email / Password");
+  assert.strictEqual(response.body.success, false);
+});
+
+test("POST /api/auth/login should reject unknown email", async () => {
+  const response = await request(app).post("/api/auth/login").send({
+    email: "doesnotexist@example.com",
+    password: "password123",
+  });
+
+  assert.strictEqual(response.statusCode, 401);
+  assert.strictEqual(response.body.message, "Invalid Email / Password");
+  assert.strictEqual(response.body.success, false);
+});
