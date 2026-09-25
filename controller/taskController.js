@@ -121,7 +121,7 @@ const updateTask = asyncHandler(async (req, res) => {
       completed: completed,
     },
     {
-      new: true,
+      returnDocument: "after",
     },
   );
 
@@ -166,7 +166,7 @@ const patchTask = asyncHandler(async (req, res) => {
       $set: updateData,
     },
     {
-      new: true,
+      returnDocument: "after",
       runValidators: true,
     },
   );

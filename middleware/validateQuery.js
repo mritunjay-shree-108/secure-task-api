@@ -1,16 +1,20 @@
+const AppError = require("../util/AppError");
+
 const validateQuery = (schema) => {
   return (req, res, next) => {
     const result = schema.safeParse(req.query);
 
     if (!result.success) {
-      return res.status(400).json({
-        message: "Invalid request",
-        error: result.error.issues,
-      });
-    } else {
-      req.validatedQuery = result.data;
-      next();
+      const errors = result.error.issues.map((issue) => ({
+        field: issue.path.join("."),
+        message: issue.message,
+      }));
+
+      return next(new AppError("Validation failed", 400, errors));
     }
+
+    req.validatedQuery = result.data;
+    return next();
   };
 };
 

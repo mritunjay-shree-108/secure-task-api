@@ -243,3 +243,202 @@ test("GET /api/tasks/:id should return 404 after deletion", async () => {
   assert.strictEqual(response.statusCode, 404);
   assert.strictEqual(response.body.success, false);
 });
+
+// another user cannot access the task
+test("GET /api/tasks/:id should prevent another user from accessing the task", async () => {
+  const ownerTask = await Task.create({
+    title: "Ownership test task",
+    description: "Testing task ownership",
+    completed: false,
+    userId: testUser._id,
+  });
+
+  const secondEmail = `second-${crypto.randomUUID()}@example.com`;
+
+  const hashedPassword = await bcrypt.hash("password123", 10);
+
+  const secondUser = await User.create({
+    email: secondEmail,
+    password: hashedPassword,
+    role: "user",
+  });
+
+  const secondLogin = await request(app).post("/api/auth/login").send({
+    email: secondEmail,
+    password: "password123",
+  });
+
+  const secondAccessToken = secondLogin.body.accessToken;
+
+  const response = await request(app)
+    .get(`/api/tasks/${ownerTask._id}`)
+    .set("Authorization", `Bearer ${secondAccessToken}`);
+
+  assert.strictEqual(response.statusCode, 404);
+
+  await Task.deleteOne({ _id: ownerTask._id });
+  await User.deleteOne({ _id: secondUser._id });
+});
+
+// test ownership for update
+test("PATCH /api/tasks/:id should prevent another user from updating the task", async () => {
+  const ownerTask = await Task.create({
+    title: "Ownership patch test",
+    description: "Testing PATCH ownership",
+    completed: false,
+    userId: testUser._id,
+  });
+
+  const secondEmail = `second-patch-${crypto.randomUUID()}@example.com`;
+
+  const hashedPassword = await bcrypt.hash("password123", 10);
+
+  const secondUser = await User.create({
+    email: secondEmail,
+    password: hashedPassword,
+    role: "user",
+  });
+
+  const secondLogin = await request(app).post("/api/auth/login").send({
+    email: secondEmail,
+    password: "password123",
+  });
+
+  const secondAccessToken = secondLogin.body.accessToken;
+
+  const response = await request(app)
+    .patch(`/api/tasks/${ownerTask._id}`)
+    .set("Authorization", `Bearer ${secondAccessToken}`)
+    .send({
+      completed: true,
+    });
+
+  assert.strictEqual(response.statusCode, 404);
+
+  const taskStillExists = await Task.findById(ownerTask._id);
+
+  assert.ok(taskStillExists);
+  assert.strictEqual(taskStillExists.completed, false);
+
+  await Task.deleteOne({ _id: ownerTask._id });
+  await User.deleteOne({ _id: secondUser._id });
+});
+
+// test ownership for delete
+test("DELETE /api/tasks/:id should prevent another user from deleting the task", async () => {
+  const ownerTask = await Task.create({
+    title: "Ownership delete test",
+    description: "Testing DELETE ownership",
+    completed: false,
+    userId: testUser._id,
+  });
+
+  const secondEmail = `second-delete-${crypto.randomUUID()}@example.com`;
+
+  const hashedPassword = await bcrypt.hash("password123", 10);
+
+  const secondUser = await User.create({
+    email: secondEmail,
+    password: hashedPassword,
+    role: "user",
+  });
+
+  const secondLogin = await request(app).post("/api/auth/login").send({
+    email: secondEmail,
+    password: "password123",
+  });
+
+  const secondAccessToken = secondLogin.body.accessToken;
+
+  const response = await request(app)
+    .delete(`/api/tasks/${ownerTask._id}`)
+    .set("Authorization", `Bearer ${secondAccessToken}`);
+
+  assert.strictEqual(response.statusCode, 404);
+
+  const taskStillExists = await Task.findById(ownerTask._id);
+
+  assert.ok(taskStillExists);
+
+  await Task.deleteOne({ _id: ownerTask._id });
+  await User.deleteOne({ _id: secondUser._id });
+});
+
+// query validation test
+
+// invalid page
+
+test("GET /api/tasks should reject invalid page", async () => {
+  const response = await request(app)
+    .get("/api/tasks")
+    .query({
+      page: "0",
+    })
+    .set("Authorization", `Bearer ${accessToken}`);
+
+  assert.strictEqual(response.statusCode, 400);
+  assert.strictEqual(response.body.message, "Validation failed");
+  assert.strictEqual(response.body.success, false);
+});
+
+// invalid limit
+
+test("GET /api/tasks should reject invalid limit", async () => {
+  const response = await request(app)
+    .get("/api/tasks")
+    .query({
+      limit: "51",
+    })
+    .set("Authorization", `Bearer ${accessToken}`);
+
+  assert.strictEqual(response.statusCode, 400);
+  assert.strictEqual(response.body.message, "Validation failed");
+  assert.strictEqual(response.body.success, false);
+});
+
+// invalid sort
+
+test("GET /api/tasks should reject invalid sort", async () => {
+  const response = await request(app)
+    .get("/api/tasks")
+    .query({
+      sort: "random",
+    })
+    .set("Authorization", `Bearer ${accessToken}`);
+
+  assert.strictEqual(response.statusCode, 400);
+  assert.strictEqual(response.body.message, "Validation failed");
+  assert.strictEqual(response.body.success, false);
+});
+
+// invalid completed filter
+
+test("GET /api/tasks should reject invalid completed filter", async () => {
+  const response = await request(app)
+    .get("/api/tasks")
+    .query({
+      completed: "yes",
+    })
+    .set("Authorization", `Bearer ${accessToken}`);
+
+  assert.strictEqual(response.statusCode, 400);
+  assert.strictEqual(response.body.message, "Validation failed");
+  assert.strictEqual(response.body.success, false);
+});
+
+// search longer than 50 characters
+
+test("GET /api/tasks should reject search longer than 50 characters", async () => {
+  const longSearch = "a".repeat(51);
+
+  const response = await request(app)
+    .get("/api/tasks")
+    .query({
+      search: longSearch,
+    })
+    .set("Authorization", `Bearer ${accessToken}`);
+
+  assert.strictEqual(response.statusCode, 400);
+  assert.strictEqual(response.body.message, "Validation failed");
+  assert.strictEqual(response.body.success, false);
+});

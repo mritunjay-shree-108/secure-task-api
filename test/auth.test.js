@@ -6,8 +6,8 @@ const crypto = require("crypto");
 const request = require("supertest");
 const jwt = require("jsonwebtoken");
 
-const { loginAsTestUser } = require("./helpers/auth");
-const { connectTestDB, disconnectTestDB } = require("./helpers/db");
+const { loginAsTestUser } = require("./helpers/auth.helper");
+const { connectTestDB, disconnectTestDB } = require("./helpers/db.helper");
 const Session = require("../models/Session");
 const app = require("../app");
 const User = require("../models/User");
