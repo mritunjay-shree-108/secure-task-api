@@ -2,11 +2,12 @@ require("dotenv").config({ path: ".env" });
 
 const test = require("node:test");
 const assert = require("node:assert");
-const mongoose = require("mongoose");
 const crypto = require("crypto");
 const request = require("supertest");
 const jwt = require("jsonwebtoken");
 
+const { loginAsTestUser } = require("./helpers/auth");
+const { connectTestDB, disconnectTestDB } = require("./helpers/db");
 const Session = require("../models/Session");
 const app = require("../app");
 const User = require("../models/User");
@@ -14,7 +15,7 @@ const User = require("../models/User");
 const testEmail = `test-${crypto.randomUUID()}@example.com`;
 
 test.before(async () => {
-  await mongoose.connect(process.env.MONGO_TEST_URI);
+  await connectTestDB();
 });
 
 test.after(async () => {
@@ -25,7 +26,8 @@ test.after(async () => {
   }
 
   await User.deleteOne({ email: testEmail });
-  await mongoose.disconnect();
+
+  await disconnectTestDB();
 });
 
 test("POST /api/auth/register should reject invalid data", async () => {
@@ -69,6 +71,20 @@ test("POST /api/auth/register should reject duplicate email", async () => {
   assert.strictEqual(response.statusCode, 409);
   assert.strictEqual(response.body.message, "This User is already Registered!");
   assert.strictEqual(response.body.success, false);
+});
+
+test("GET /api/auth/profile should allow authenticated user", async () => {
+  const { accessToken } = await loginAsTestUser(testEmail, "password123");
+
+  const response = await request(app)
+    .get("/api/auth/profile")
+    .set("Authorization", `Bearer ${accessToken}`);
+
+  assert.strictEqual(response.statusCode, 200);
+  assert.strictEqual(response.body.message, "Authenticated Successfully!");
+
+  assert.strictEqual(response.body.user.email, testEmail);
+  assert.strictEqual(response.body.user.role, "user");
 });
 
 test("POST /api/auth/login should login successfully", async () => {
