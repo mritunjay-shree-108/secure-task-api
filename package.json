@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "cross-env NODE_ENV=test node --test",
+    "test": "cross-env NODE_ENV=test node --test \"test/**/*.test.js\"",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
