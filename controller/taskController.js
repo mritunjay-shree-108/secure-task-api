@@ -66,17 +66,24 @@ const getTasks = asyncHandler(async (req, res) => {
   const totalPages = Math.ceil(totalTasks / limit);
 
   const userTasks = await Task.find(filter)
-    .populate("userId", "email role")
     .sort({ createdAt: sortKey })
     .skip(skip)
     .limit(limit);
+
+  const formattedTasks = userTasks.map((task) => ({
+    id: task._id,
+    title: task.title,
+    description: task.description,
+    completed: task.completed,
+    userId: task.userId,
+  }));
 
   return res.json({
     page: page,
     limit: limit,
     totalTasks: totalTasks,
     totalPages: totalPages,
-    tasks: userTasks,
+    tasks: formattedTasks,
   });
 });
 
@@ -90,14 +97,22 @@ const getTask = asyncHandler(async (req, res) => {
   const requestedTask = await Task.findOne({
     _id: id,
     userId: req.user.id,
-  }).populate("userId", "email role");
+  });
 
   if (!requestedTask) {
     throw new AppError("Task Doesn't Exist!", 404);
   }
 
+  const formattedTask = {
+    id: requestedTask._id,
+    title: requestedTask.title,
+    description: requestedTask.description,
+    completed: requestedTask.completed,
+    userId: requestedTask.userId,
+  };
+
   return res.json({
-    task: requestedTask,
+    task: formattedTask,
   });
 });
 
@@ -129,8 +144,16 @@ const updateTask = asyncHandler(async (req, res) => {
     throw new AppError("Task doesn't exists!", 404);
   }
 
+  const formattedTask = {
+    id: requestedTask._id,
+    title: requestedTask.title,
+    description: requestedTask.description,
+    completed: requestedTask.completed,
+    userId: requestedTask.userId,
+  };
+
   return res.json({
-    task: requestedTask,
+    task: formattedTask,
   });
 });
 
@@ -175,8 +198,16 @@ const patchTask = asyncHandler(async (req, res) => {
     throw new AppError("Task doesn't exist!", 404);
   }
 
+  const formattedTask = {
+    id: requestedTask._id,
+    title: requestedTask.title,
+    description: requestedTask.description,
+    completed: requestedTask.completed,
+    userId: requestedTask.userId,
+  };
+
   return res.json({
-    task: requestedTask,
+    task: formattedTask,
   });
 });
 

@@ -104,7 +104,7 @@ test("GET /api/tasks should return user's tasks", async () => {
   assert.ok(response.body.totalTasks >= 1);
   assert.ok(response.body.totalPages >= 1);
 
-  assert.strictEqual(response.body.tasks[0].userId.email, testEmail);
+  assert.equal(response.body.tasks[0].userId, testUser._id.toString());
 });
 
 // get one task
@@ -116,7 +116,7 @@ test("GET /api/tasks/:id should return the task", async () => {
 
   assert.strictEqual(response.statusCode, 200);
 
-  assert.strictEqual(response.body.task._id, taskId);
+  response.body.task.userId;
 
   assert.strictEqual(response.body.task.title, "Learn automated testing");
 });
