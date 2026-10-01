@@ -127,7 +127,7 @@ secure-task-api/
       npm start
    ```
 
-The backend runs on the configured local port.
+   The backend runs on the configured local port.
 
 3. Frontend setup
    Open a second terminal:
