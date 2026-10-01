@@ -72,7 +72,7 @@ The project focuses on secure authentication, protected APIs, task management, v
 
 ## Project Structure
 
-````text
+text```
 secure-task-api/
 │
 ├── controller/
@@ -100,6 +100,7 @@ secure-task-api/
 ├── package.json
 ├── package-lock.json
 └── server.js
+```
 
 ## Getting Started
 
@@ -107,21 +108,20 @@ secure-task-api/
 bash```
 git clone https://github.com/mritunjay-shree-108/secure-task-api.git
 cd secure-task-api
-````
+```
 
 2. Backend setup
-   Install dependencies:
-   bash```
+Install dependencies:
+bash```
    npm install
-
-````
+```
 
 Create a .env file using .env.example as a reference and add your local configuration.
 
 Start the backend:
 bash```
 npm start
-````
+```
 
 The backend runs on the configured local port.
 
@@ -131,13 +131,12 @@ Open a second terminal:
 bash```
 cd frontend
 npm install
-
-````
+```
 
 Start the React development server:
 bash```
 npm run dev
-````
+```
 
 The frontend will be available at the URL shown by Vite.
 
@@ -148,13 +147,12 @@ Authentication
 text```
 POST /api/auth/register
 POST /api/auth/login
-
-````
+```
 
 User
 text```
 GET /api/auth/profile
-````
+```
 
 Tasks
 text```
@@ -163,21 +161,19 @@ POST /api/tasks
 PUT /api/tasks/:id
 PATCH /api/tasks/:id
 DELETE /api/tasks/:id
-
-````
+```
 Task listing supports pagination, search, and completion filtering.
 
 Example:
 text```
 GET /api/tasks?page=1&limit=5&search=react&completed=true
-````
+```
 
 ## Testing
 
 Run backend tests with:
 bash```
 npm test
-
 ```
 
 The project includes automated tests covering authentication, API behavior, task functionality, validation, and related backend behavior.
