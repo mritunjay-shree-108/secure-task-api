@@ -180,7 +180,7 @@ Example:
 
 ## Testing
 
-- Run backend tests with:
+ Run backend tests with:
   ```bash
   npm test
   ```
