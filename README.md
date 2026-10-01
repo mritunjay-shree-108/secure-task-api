@@ -72,7 +72,7 @@ The project focuses on secure authentication, protected APIs, task management, v
 
 ## Project Structure
 
-text```
+```text
 secure-task-api/
 │
 ├── controller/
@@ -105,79 +105,87 @@ secure-task-api/
 ## Getting Started
 
 1. Clone the repository
-bash```
-git clone https://github.com/mritunjay-shree-108/secure-task-api.git
-cd secure-task-api
-```
+
+   ```bash
+      git clone https://github.com/mritunjay-shree-108/secure-task-api.git
+      cd secure-task-api
+   ```
 
 2. Backend setup
-Install dependencies:
-bash```
-   npm install
-```
 
-Create a .env file using .env.example as a reference and add your local configuration.
+   Install dependencies:
 
-Start the backend:
-bash```
-npm start
-```
+   ```bash
+      npm install
+   ```
+
+   Create a .env file using .env.example as a reference and add your local configuration.
+
+   Start the backend:
+
+   ```bash
+      npm start
+   ```
 
 The backend runs on the configured local port.
 
 3. Frontend setup
+   Open a second terminal:
 
-Open a second terminal:
-bash```
-cd frontend
-npm install
-```
+   ```bash
+      cd frontend
+      npm install
+   ```
 
-Start the React development server:
-bash```
-npm run dev
-```
+   Start the React development server:
 
-The frontend will be available at the URL shown by Vite.
+   ```bash
+      npm run dev
+   ```
+
+   The frontend will be available at the URL shown by Vite.
 
 ## API Overview
 
 Authentication
 
-text```
-POST /api/auth/register
-POST /api/auth/login
+```text
+   POST /api/auth/register
+   POST /api/auth/login
 ```
 
 User
-text```
-GET /api/auth/profile
+
+```text
+   GET /api/auth/profile
 ```
 
 Tasks
-text```
-GET /api/tasks
-POST /api/tasks
-PUT /api/tasks/:id
-PATCH /api/tasks/:id
-DELETE /api/tasks/:id
+
+```text
+   GET /api/tasks
+   POST /api/tasks
+   PUT /api/tasks/:id
+   PATCH /api/tasks/:id
+   DELETE /api/tasks/:id
 ```
+
 Task listing supports pagination, search, and completion filtering.
 
 Example:
-text```
-GET /api/tasks?page=1&limit=5&search=react&completed=true
+
+```text
+   GET /api/tasks?page=1&limit=5&search=react&completed=true
 ```
 
 ## Testing
 
-Run backend tests with:
-bash```
-npm test
-```
+- Run backend tests with:
+  ```bash
+  npm test
+  ```
 
 The project includes automated tests covering authentication, API behavior, task functionality, validation, and related backend behavior.
-
 
 ### Security Notes
 
@@ -188,8 +196,8 @@ The project includes automated tests covering authentication, API behavior, task
 - Users can access only their authorized task resources.
 - Request data is validated before processing.
 
-
 ### Future Improvements
+
 - Better UI styling and responsive design
 - Toast notification system
 - Task sorting
@@ -199,9 +207,8 @@ The project includes automated tests covering authentication, API behavior, task
 - CI/CD with GitHub Actions
 
 ## Author
+
 Mritunjay Shree
 
 GitHub:
 https://github.com/mritunjay-shree-108
-
-```
